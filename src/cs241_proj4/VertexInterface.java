@@ -16,7 +16,7 @@ public interface VertexInterface <T> {
 	public boolean isVisited();
 	public boolean connect(VertexInterface<T> endVertex, double edgeWeight);
 	public boolean connect (VertexInterface <T> endVertex);
-	public Iterator<VertexInterface<T>> getNeightboreIterator();
+	public Iterator<VertexInterface<T>> getNeightborIterator();
 	public Iterator<Double> getWeightIterator();
 	public boolean hasNeighbor ();
 	public VertexInterface<T> getUnvisitedNeighbor();
