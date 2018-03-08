@@ -53,20 +53,34 @@ public class Vertex <T> implements VertexInterface<T> {
 
 	@Override
 	public boolean connect(VertexInterface<T> endVertex, double edgeWeight) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = false;
+		if (!this.equals(endVertex))
+		{
+			Iterator<VertexInterface<T>> neighbors = getNeighborIterator();
+			boolean duplicateEdge = false;
+			while (!duplicateEdge && neighbors.hasNext())
+			{
+				VertexInterface<T> nextNeighbor = neighbors.next();
+				if (endVertex.equals(nextNeighbor))
+					duplicateEdge = true;
+				}
+			if (!duplicateEdge)
+			{
+				edgeList.add(new Edge(endVertex, edgeWeight));
+				result = true;
+				}
+			}
+		return result; 
 	}
 
 	@Override
 	public boolean connect(VertexInterface<T> endVertex) {
-		// TODO Auto-generated method stub
-		return false;
+		return connect(endVertex, 0);
 	}
 
 	@Override
-	public Iterator<VertexInterface<T>> getNeightboreIterator() {
-		// TODO Auto-generated method stub
-		return null;
+	public Iterator<VertexInterface<T>> getNeighborIterator() {
+		return new NeighborIterator();
 	}
 
 	@Override
@@ -133,6 +147,30 @@ public class Vertex <T> implements VertexInterface<T> {
 		protected double getWeight()
 		{
 			return weight;
+		}
+	}
+	private class NeighborIterator implements Iterator<VertexInterface<T>>
+	{
+		private Iterator <Edge> edges;
+		private NeighborIterator()
+		{
+			edges = edgeList.getIterator();
+		}
+		public boolean hasNext()
+		{
+			return edges.hasNext();
+		}
+		public VertexInterface<T> next()
+		{
+			VertexInterface<T> nextNeighbor = null;
+			if(edges.hasNext())
+			{
+				Edge edgeToNextNeighbor = edges.next();
+				nextNeighbor = edgeToNextNeighbor.getEndVertex();
+			}
+			else
+				throw new NoSuchElementException();
+			return nextNeighbor;
 		}
 	}
 }
