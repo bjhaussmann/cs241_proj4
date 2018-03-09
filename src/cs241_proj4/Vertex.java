@@ -29,26 +29,37 @@ public class Vertex <T> implements VertexInterface<T> {
 
 	@Override
 	public T getLabel() {
-		// TODO Auto-generated method stub
-		return null;
+		return label;
 	}
 
 	@Override
 	public void visit() {
-		// TODO Auto-generated method stub
-		
+		visited = true;
 	}
 
 	@Override
 	public void unvisit() {
-		// TODO Auto-generated method stub
-		
+		visited = false;
 	}
 
 	@Override
 	public boolean isVisited() {
-		// TODO Auto-generated method stub
-		return false;
+		return visited;
+	}
+	
+	@Override
+	public boolean equals (Object other)
+	{
+		boolean result;
+		if((other == null) || (getClass() != other.getClass()))
+			result = false;
+		else
+		{
+			@SuppressWarnings("unchecked")
+			Vertex<T> otherVertex = (Vertex<T>) other;
+			result = label.equals(otherVertex.label);
+		}
+		return result;
 	}
 
 	@Override
@@ -85,50 +96,51 @@ public class Vertex <T> implements VertexInterface<T> {
 
 	@Override
 	public Iterator<Double> getWeightIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new getWeightIterator();
 	}
 
 	@Override
 	public boolean hasNeighbor() {
-		// TODO Auto-generated method stub
-		return false;
+		return !edgeList.isEmpty();
 	}
 
 	@Override
 	public VertexInterface<T> getUnvisitedNeighbor() {
-		// TODO Auto-generated method stub
-		return null;
+		VertexInterface <T> result = null;
+		Iterator<VertexInterface<T>> neighbors = getNeighborIterator();
+		while (neighbors.hasNext() && (result == null))
+		{
+			VertexInterface<T> nextNeighbor = neighbors.next();
+			if( !nextNeighbor.isVisited())
+				result = nextNeighbor;
+		}
+		return result;
 	}
 
 	@Override
 	public void setPredecessor(VertexInterface<T> predecessor) {
-		// TODO Auto-generated method stub
+		previousVertex = predecessor;
 		
 	}
 
 	@Override
 	public VertexInterface<T> getPredecessor() {
-		// TODO Auto-generated method stub
-		return null;
+		return previousVertex;
 	}
 
 	@Override
 	public boolean hasPredecessor() {
-		// TODO Auto-generated method stub
-		return false;
+		return (previousVertex != null);
 	}
 
 	@Override
 	public void setCost(double newCost) {
-		// TODO Auto-generated method stub
-		
+		cost = newCost;
 	}
 
 	@Override
 	public double getCost() {
-		// TODO Auto-generated method stub
-		return 0;
+		return cost;
 	}
 	
 	protected class Edge
@@ -149,6 +161,7 @@ public class Vertex <T> implements VertexInterface<T> {
 			return weight;
 		}
 	}
+	
 	private class NeighborIterator implements Iterator<VertexInterface<T>>
 	{
 		private Iterator <Edge> edges;
@@ -171,6 +184,31 @@ public class Vertex <T> implements VertexInterface<T> {
 			else
 				throw new NoSuchElementException();
 			return nextNeighbor;
+		}
+	}
+	
+	private class getWeightIterator implements Iterator<Double>
+	{
+		private Iterator <Edge> edges;
+		private getWeightIterator()
+		{
+			edges = edgeList.getIterator();
+		}
+		public boolean hasNext()
+		{
+			return edges.hasNext();
+		}
+		public Double next()
+		{
+			VertexInterface<T> nextNeighbor = null;
+			if(edges.hasNext())
+			{
+				Edge edgeToNextNeighbor = edges.next();
+				nextNeighbor = edgeToNextNeighbor.getEndVertex();
+			}
+			else
+				throw new NoSuchElementException();
+			return nextNeighbor.getCost();
 		}
 	}
 }
