@@ -123,8 +123,32 @@ public class DirectedGraph<T extends Comparable<? super T>> implements GraphInte
 
 	@Override
 	public QueueInterface<T> getDepthFirstTraversal(T origin) {
-		// TODO Auto-generated method stub
-		return null;
+		resetVertices();
+		QueueInterface<T> traversalOrder = new LinkedQueue<>();
+		StackInterface<VertexInterface<T>> vertexStack = new LinkedStack<>();
+		VertexInterface<T> originVertex = vertices.getValue(origin);
+		originVertex.visit();
+		traversalOrder.enqueue(origin);
+		vertexStack.push(originVertex);
+		
+		while(!vertexStack.isEmpty())
+		{
+			VertexInterface<T> topVertex = vertexStack.peek();
+			Iterator<VertexInterface<T>> neighbors = topVertex.getNeighborIterator();
+			while (neighbors.hasNext())
+			{
+				VertexInterface<T> nextNeighbor = neighbors.next();
+				if(!nextNeighbor.isVisited())
+				{
+					nextNeighbor.visit();
+					traversalOrder.enqueue(nextNeighbor.getLabel());
+					vertexStack.push(nextNeighbor);
+				}
+				else
+					vertexStack.pop();
+			}
+		}
+		return traversalOrder;
 	}
 
 	@Override
