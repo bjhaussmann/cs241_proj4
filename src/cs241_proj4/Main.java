@@ -3,6 +3,7 @@
  */
 package cs241_proj4;
 
+import java.util.Iterator;
 import java.util.Scanner;
 import java.io.*;
 
@@ -14,22 +15,25 @@ public class Main {
 
 	/**
 	 * @param args
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
+	@SuppressWarnings("null")
+	public static void main(String[] args) throws FileNotFoundException {
 		String command = "";
 		Scanner scan = new Scanner(System.in);
 		DirectedGraph<Integer> dg = new DirectedGraph<Integer>();
 		
 		Scanner city = new Scanner(new File("city.dat"));
 		Scanner road = new Scanner(new File("road.dat"));
+		LinkedListWithIterator<CityNode> cities = new LinkedListWithIterator<CityNode>();
+		CityNode newCity = new CityNode();
 		
-		while (city.hasNextLine())
+		while (city.hasNext())
 		{
-			CityNode newCity = new CityNode();
-			dg.addVertex(read(city, newCity));
+			dg.addVertex(read(city, newCity, cities));
 		}
 		
-		while (road.hasNextLine())
+		while (road.hasNext())
 		{
 			int city1, city2, dist;
 			city1 = road.nextInt();
@@ -38,6 +42,7 @@ public class Main {
 			dg.addEdge(city1, city2, dist);
 		}
 		
+		int begin, end;
 		// Checks if command is not E to exit
 		while (!command.equalsIgnoreCase("E")) {
 			System.out.print("Command? ");
@@ -45,16 +50,41 @@ public class Main {
 
 			switch (command.toUpperCase()) {
 			case "Q":
-				QCommand(dg);
+				System.out.println("City Code: ");
+				String abbrev = scan.nextLine();
+				Iterator <CityNode> cityIT = cities.getIterator();
+				boolean found = false;
+				while (cityIT.hasNext() && found != true)
+				{
+					CityNode nextCity = cityIT.next();
+					if (nextCity.abbrev == abbrev)
+					{
+						System.out.println(nextCity.num + "\t" + nextCity.abbrev + "\t" + nextCity.name + "\t" + nextCity.pop + "\t" + nextCity.elev);
+						found = true;
+					}
+				}
 				break;
 			case "D":
-				DCommand(dg);
+				System.out.println("City codes: ");
+				begin = getNum(cities, scan.next());
+				end = getNum(cities, scan.next());
+				StackInterface<Integer> path = null;
+				int length = dg.getShortestPath(begin, end, path);
+				System.out.println("The minimum distance between " + getName(cities, begin) + " and " + getName(cities, end) + " is " + length + "through route: " + path.toString());
 				break;
 			case "I":
-				ICommand(dg);
+				System.out.print("City codes and distance: ");
+				begin = getNum(cities, scan.next());
+				end = getNum(cities, scan.next());
+				int dist = scan.nextInt();
+				dg.addEdge(begin, end, dist);
+				System.out.println("You have inserted a road from " + getName(cities, begin) + " to " + getName(cities, end) + " with a distance of " + dist + ".");
 				break;
 			case "R":
-				RCommand(dg);
+				System.out.print("City codes: ");
+				begin = getNum(cities, scan.next());
+				end = getNum(cities, scan.next());
+				dg.removeEdge(begin, end);
 				break;
 			// Runs H command, which displays all the command to choose from
 			case "H":
@@ -67,7 +97,6 @@ public class Main {
 				break;
 			// Runs E command, which exits the program
 			case "E":
-				System.out.print("Thank you for using my program.");
 				break;
 			// Catches if the command given is an option
 			default:
@@ -75,20 +104,53 @@ public class Main {
 				break;
 			}
 		}
+		scan.close();
+		city.close();
+		road.close();
 	}
-	protected static int read(Scanner city, CityNode newCity)
+	private static String getName(LinkedListWithIterator<CityNode> cities, int num) {
+		Iterator <CityNode> cityIT = cities.getIterator();
+		while (cityIT.hasNext())
+		{
+			CityNode nextCity = cityIT.next();
+			if (nextCity.num == num)
+			{
+				return nextCity.name;
+			}
+		}
+		return "";
+	}
+	private static int getNum(LinkedListWithIterator<CityNode> cities, String abbrev) {
+		Iterator <CityNode> cityIT = cities.getIterator();
+		while (cityIT.hasNext())
+		{
+			CityNode nextCity = cityIT.next();
+			if (nextCity.abbrev == abbrev)
+			{
+				return nextCity.num;
+			}
+		}
+		return 0;
+	}
+	protected static int read(Scanner city, CityNode newCity, LinkedListWithIterator<CityNode> cities)
 	{
 		int num = city.nextInt();
-		LinkedListWithIterator<CityNode> cities = new LinkedListWithIterator<CityNode>();
 		newCity.setNum(num);
 		newCity.setAbbrev(city.next());
 		newCity.setName(city.next());
-		newCity.setPop(city.nextInt());
+		String temp = newCity.getName();
+		if(city.hasNextInt())
+			newCity.setPop(city.nextInt());
+		else
+		{
+			temp.concat(" " + city.next());
+			newCity.setName(temp);
+		}
 		newCity.setElev(city.nextInt());
 		cities.add(newCity);
 		return num;
 	}
-	protected class CityNode{
+	protected static class CityNode{
 		private int num;
 		private String abbrev;
 		private String name;

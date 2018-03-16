@@ -83,6 +83,16 @@ public class Vertex <T> implements VertexInterface<T> {
 			}
 		return result; 
 	}
+	
+	@Override
+	public boolean disconnect (VertexInterface<T> endVertex)
+	{
+		boolean result = false;
+		@SuppressWarnings("unchecked")
+		int givenPosition = edgeList.getNodePosition((VertexInterface<Vertex<T>.Edge>) endVertex);
+		edgeList.remove(givenPosition);
+		return result;
+	}
 
 	@Override
 	public boolean connect(VertexInterface<T> endVertex) {

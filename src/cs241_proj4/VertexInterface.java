@@ -25,4 +25,5 @@ public interface VertexInterface <T> {
 	public boolean hasPredecessor();
 	public void setCost(double newCost);
 	public double getCost();
+	boolean disconnect(VertexInterface<T> endVertex);
 }

@@ -26,6 +26,18 @@ public class DirectedGraph<T extends Comparable<? super T>> implements GraphInte
 		return addOutcome == null;
 	}
 
+	public boolean removeEdge(T begin, T end)
+	{
+		boolean result = false;
+		VertexInterface<T> beginVertex = vertices.getValue(begin);
+		VertexInterface<T> endVertex = vertices.getValue(end);
+		if((beginVertex != null) && (endVertex != null))
+			result = beginVertex.disconnect(endVertex);
+		if(result)
+			edgeCount++;
+		return result;
+	}
+	
 	@Override
 	public boolean addEdge(T begin, T end, double edgeWeight) {
 		boolean result = false;

@@ -35,11 +35,24 @@ public class LinkedListWithIterator<T> implements ListWithIteratorInterface<T>{
 		}
 		numberOfEntries ++;
 	}
+	
+	public int getNodePosition(VertexInterface<T> node)
+	{
+		int position = 0;
+		Node<T> newNode = firstNode;
+		while (newNode != node)
+		{
+			newNode = newNode.getNextNode();
+			position++;
+		}
+		
+		return position;
+	}
 
 	private Node<T> getNodeAt(int numberOfEntries) {
 		Node<T> newNode = firstNode;
-		for (int i = 0; i < numberOfEntries; i++)
-			newNode = firstNode.getNextNode();
+		for (int i = 1; i < numberOfEntries; i++)
+			newNode = newNode.getNextNode();
 		return newNode;
 	}
 	@Override
