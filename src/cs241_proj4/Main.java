@@ -143,8 +143,8 @@ public class Main {
 			newCity.setPop(city.nextInt());
 		else
 		{
-			temp.concat(" " + city.next());
-			newCity.setName(temp);
+			newCity.setName(temp.concat(" " + city.next()));
+			newCity.setPop(city.nextInt());
 		}
 		newCity.setElev(city.nextInt());
 		cities.add(newCity);
