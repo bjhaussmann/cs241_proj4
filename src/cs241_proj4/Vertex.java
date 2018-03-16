@@ -210,7 +210,15 @@ public class Vertex <T> implements VertexInterface<T> {
 		}
 		public Double next()
 		{
-			VertexInterface<T> nextNeighbor = null;
+			Double edgeWeight = new Double(0);
+			if(edges.hasNext()) {
+				Edge edgeToNextNeighbor = edges.next();
+				edgeWeight = edgeToNextNeighbor.getWeight();
+			}
+			else 
+				throw new NoSuchElementException();
+			return edgeWeight;
+			/*VertexInterface<T> nextNeighbor = null;
 			if(edges.hasNext())
 			{
 				Edge edgeToNextNeighbor = edges.next();
@@ -218,7 +226,7 @@ public class Vertex <T> implements VertexInterface<T> {
 			}
 			else
 				throw new NoSuchElementException();
-			return nextNeighbor.getCost();
+			return nextNeighbor.getCost();*/
 		}
 	}
 }

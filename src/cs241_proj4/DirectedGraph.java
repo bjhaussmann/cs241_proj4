@@ -4,6 +4,7 @@
 package cs241_proj4;
 
 import java.util.Iterator;
+import java.util.PriorityQueue;
 
 /**
  * @author Ben
@@ -142,7 +143,6 @@ public class DirectedGraph<T extends Comparable<? super T>> implements GraphInte
 		originVertex.visit();
 		traversalOrder.enqueue(origin);
 		vertexStack.push(originVertex);
-		
 		while(!vertexStack.isEmpty())
 		{
 			VertexInterface<T> topVertex = vertexStack.peek();
@@ -173,8 +173,7 @@ public class DirectedGraph<T extends Comparable<? super T>> implements GraphInte
 			VertexInterface<T> nextVertex = findTerminal();
 			nextVertex.visit();
 			vertexStack.push(nextVertex.getLabel());
-		} // end for
-		
+		}
 		return vertexStack;	
 	}
 	
@@ -185,8 +184,7 @@ public class DirectedGraph<T extends Comparable<? super T>> implements GraphInte
 		Iterator<VertexInterface<T>> vertexIterator = vertices.getValueIterator();
 		while (!found && vertexIterator.hasNext())
 		{
-			VertexInterface<T> nextVertex = vertexIterator.next();
-						
+			VertexInterface<T> nextVertex = vertexIterator.next();		
 			if (!nextVertex.isVisited())
 			{ 
 				if (nextVertex.getUnvisitedNeighbor() == null )
@@ -239,7 +237,91 @@ public class DirectedGraph<T extends Comparable<? super T>> implements GraphInte
 
 	@Override
 	public double getCheapestPath(T begin, T end, StackInterface<T> path) {
-		// TODO Auto-generated method stub
-		return 0;
+		resetVertices();
+		boolean done = false;
+		PriorityQueue<EntryPQ> priorityQueue = new PriorityQueue<EntryPQ>();
+		VertexInterface<T> originVertex = vertices.getValue(begin);
+		VertexInterface<T> endVertex = vertices.getValue(end);
+		priorityQueue.add(new EntryPQ(originVertex, 0, null));
+		while (!done && !priorityQueue.isEmpty())
+		{
+			EntryPQ frontEntry = priorityQueue.remove();
+			VertexInterface<T> frontVertex = frontEntry.getVertex();
+			if (!frontVertex.isVisited())
+			{
+				frontVertex.visit();
+				frontVertex.setCost(frontEntry.getCost());
+				frontVertex.setPredecessor(frontEntry.getPredecessor());
+				if (frontVertex.equals(endVertex)) {
+					done = true;
+				}
+				else 
+				{
+					Iterator<VertexInterface<T>> neighbors = frontVertex.getNeighborIterator();
+					Iterator<Double> edgeWeights = frontVertex.getWeightIterator();
+					while (neighbors.hasNext())
+					{
+						VertexInterface<T> nextNeighbor = neighbors.next();
+						Double weightOfEdgeToNeighbor = edgeWeights.next();
+						if (!nextNeighbor.isVisited())
+						{
+							double nextCost = weightOfEdgeToNeighbor + frontVertex.getCost();
+							priorityQueue.add(new EntryPQ(nextNeighbor, nextCost, frontVertex));
+						}
+					}
+				}
+			}
+		}
+
+		double pathCost = endVertex.getCost();
+		path.push(endVertex.getLabel());
+		VertexInterface<T> vertex = endVertex;
+		while (vertex.hasPredecessor())
+		{
+			vertex = vertex.getPredecessor();
+			path.push(vertex.getLabel());
+		}
+
+		return pathCost;
+	}
+	@SuppressWarnings("serial")
+	private class EntryPQ implements Comparable<EntryPQ>, java.io.Serializable
+	{
+		private VertexInterface<T> vertex; 	
+		private VertexInterface<T> previousVertex; 
+		private double cost;
+		
+		private EntryPQ(VertexInterface<T> vertex, double cost, VertexInterface<T> previousVertex)
+		{
+			this.vertex = vertex;
+			this.previousVertex = previousVertex;
+			this.cost = cost;
+		}
+		
+		public VertexInterface<T> getVertex()
+		{
+			return vertex;
+		}
+		
+		public VertexInterface<T> getPredecessor()
+		{
+			return previousVertex;
+		}
+
+		public double getCost()
+		{
+			return cost;
+		}
+		
+		public int compareTo(EntryPQ otherEntry)
+		{
+			return (int)Math.signum(cost - otherEntry.cost);
+		}
+		
+		public String toString()
+		{
+			return vertex.toString() + " " + cost;
+		}
 	}
 }
+

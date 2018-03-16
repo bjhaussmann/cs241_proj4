@@ -43,7 +43,6 @@ public class Main {
 		}
 		
 		int begin, end;
-		// Checks if command is not E to exit
 		while (!command.equals("E")) {
 			System.out.print("Command? ");
 			command = scan.nextLine().toUpperCase();
@@ -68,9 +67,14 @@ public class Main {
 				System.out.println("City codes: ");
 				begin = getNum(cities, scan.next().toUpperCase());
 				end = getNum(cities, scan.next().toUpperCase());
-				StackInterface<Integer> path = null;
-				int length = dg.getShortestPath(begin, end, path);
-				System.out.println("The minimum distance between " + getName(cities, begin) + " and " + getName(cities, end) + " is " + length + "through route: " + path.toString());
+				StackInterface<Integer> path = new LinkedStack<Integer>();
+				double length = dg.getCheapestPath(begin, end, path);
+				System.out.print("The minimum distance between " + getName(cities, begin) + " and " + getName(cities, end) + " is " + length + " through route: ");
+				while( !path.isEmpty())
+				{
+					System.out.print(getAbbrev(cities, path.pop()) + " ");
+				}
+				System.out.println();
 				break;
 			case "I":
 				System.out.print("City codes and distance: ");
@@ -88,7 +92,6 @@ public class Main {
 				end = getNum(cities, scan.next().toUpperCase());
 				dg.removeEdge(begin, end);
 				break;
-			// Runs H command, which displays all the command to choose from
 			case "H":
 				System.out.println("Q  Query the city information by entering the city code.");
 				System.out.println("D  Find the minimum distance between two cities.");
@@ -97,10 +100,8 @@ public class Main {
 				System.out.println("H  Display this message.");
 				System.out.println("E  Exit.");
 				break;
-			// Runs E command, which exits the program
 			case "E":
 				break;
-			// Catches if the command given is an option
 			default:
 				System.out.print("This is not a command. Type H for help.\n");
 				break;
@@ -109,6 +110,16 @@ public class Main {
 		scan.close();
 		city.close();
 		road.close();
+	}
+	private static String getAbbrev(LinkedListWithIterator<CityNode> cities, int num) {
+		Iterator <CityNode> cityIT = cities.getIterator();
+		while (cityIT.hasNext())
+		{
+			CityNode nextCity = cityIT.next();
+			if (nextCity.num == num)
+				return nextCity.getAbbrev();
+		}
+		return "";
 	}
 	private static String getName(LinkedListWithIterator<CityNode> cities, int num) {
 		Iterator <CityNode> cityIT = cities.getIterator();
