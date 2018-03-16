@@ -11,15 +11,14 @@ import java.util.EmptyStackException;
  */
 public class LinkedQueue<T> implements QueueInterface<T> {
 
-	private Node firstNode;
-	private Node lastNode;
+	private Node<T> firstNode;
+	private Node<T> lastNode;
 	
 	public LinkedQueue()
 	{
 		firstNode = null;
 		lastNode = null;
 	}
-	@SuppressWarnings("unchecked")
 	@Override
 	public void enqueue(T newEntry) {
 		Node <T> newNode = new Node<T>(newEntry, null);
@@ -30,7 +29,6 @@ public class LinkedQueue<T> implements QueueInterface<T> {
 		lastNode = newNode;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public T dequeue() {
 		T front = getFront();
@@ -42,7 +40,6 @@ public class LinkedQueue<T> implements QueueInterface<T> {
 		return front;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public T getFront() {
 		if(isEmpty())

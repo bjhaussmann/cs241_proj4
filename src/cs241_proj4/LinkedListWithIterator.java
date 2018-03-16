@@ -78,7 +78,26 @@ public class LinkedListWithIterator<T> implements ListWithIteratorInterface<T>{
 		else
 			throw new IndexOutOfBoundsException("Illegal position given to add operation."); 
 	}
-
+	
+	public boolean remove (T num)
+	{
+		boolean removed =false;
+		if (!isEmpty())
+		{
+			Node<T> newNode = firstNode;
+			while(newNode.getNextNode() != null)
+			{
+				if(newNode.getNextNode().getData() == num)
+				{
+					newNode.setNextNode(newNode.getNextNode().getNextNode());
+					removed = true;
+				}
+					
+			}
+		}
+		return removed;
+	}
+	
 	@Override
 	public T remove(int givenPosition) {
 		T result = null;

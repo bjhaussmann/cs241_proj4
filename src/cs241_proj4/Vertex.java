@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 public class Vertex <T> implements VertexInterface<T> {
 	
 	private T label;
-	private ListWithIteratorInterface<Edge> edgeList;
+	private LinkedListWithIterator<Edge> edgeList;
 	private boolean visited;
 	private VertexInterface<T> previousVertex;
 	private double cost;
@@ -84,13 +84,13 @@ public class Vertex <T> implements VertexInterface<T> {
 		return result; 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean disconnect (VertexInterface<T> endVertex)
 	{
 		boolean result = false;
-		@SuppressWarnings("unchecked")
-		int givenPosition = edgeList.getNodePosition((VertexInterface<Vertex<T>.Edge>) endVertex);
-		edgeList.remove(givenPosition);
+		//requires a cast to compile. Won't let me cast. Should work otherwise.
+		edgeList.remove((Vertex<T>.Edge) endVertex.getLabel());
 		return result;
 	}
 
@@ -218,15 +218,6 @@ public class Vertex <T> implements VertexInterface<T> {
 			else 
 				throw new NoSuchElementException();
 			return edgeWeight;
-			/*VertexInterface<T> nextNeighbor = null;
-			if(edges.hasNext())
-			{
-				Edge edgeToNextNeighbor = edges.next();
-				nextNeighbor = edgeToNextNeighbor.getEndVertex();
-			}
-			else
-				throw new NoSuchElementException();
-			return nextNeighbor.getCost();*/
 		}
 	}
 }
