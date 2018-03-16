@@ -34,10 +34,11 @@ public class Main {
 		
 		while (road.hasNext())
 		{
-			int city1, city2, dist;
+			int city1, city2;
+			double dist;
 			city1 = road.nextInt();
 			city2 = road.nextInt();
-			dist = road.nextInt();
+			dist = road.nextDouble();
 			dg.addEdge(city1, city2, dist);
 		}
 		
