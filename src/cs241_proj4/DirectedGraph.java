@@ -165,8 +165,38 @@ public class DirectedGraph<T extends Comparable<? super T>> implements GraphInte
 
 	@Override
 	public StackInterface<T> getTopologicalOrder() {
-		// TODO Auto-generated method stub
-		return null;
+		resetVertices();
+		LinkedStack<T> vertexStack = new LinkedStack<T>();
+		int numberOfVertices = getNumberOfVertices();
+		for (int counter = 1; counter <= numberOfVertices; counter++)
+		{
+			VertexInterface<T> nextVertex = findTerminal();
+			nextVertex.visit();
+			vertexStack.push(nextVertex.getLabel());
+		} // end for
+		
+		return vertexStack;	
+	}
+	
+	protected VertexInterface<T> findTerminal()
+	{
+		boolean found = false;
+		VertexInterface<T> result = null;
+		Iterator<VertexInterface<T>> vertexIterator = vertices.getValueIterator();
+		while (!found && vertexIterator.hasNext())
+		{
+			VertexInterface<T> nextVertex = vertexIterator.next();
+						
+			if (!nextVertex.isVisited())
+			{ 
+				if (nextVertex.getUnvisitedNeighbor() == null )
+				{ 
+					found = true;
+					result = nextVertex;
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override
