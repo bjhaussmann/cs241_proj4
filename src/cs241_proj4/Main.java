@@ -29,6 +29,15 @@ public class Main {
 			dg.addVertex(read(city, newCity));
 		}
 		
+		while (road.hasNextLine())
+		{
+			int city1, city2, dist;
+			city1 = road.nextInt();
+			city2 = road.nextInt();
+			dist = road.nextInt();
+			dg.addEdge(city1, city2, dist);
+		}
+		
 		// Checks if command is not E to exit
 		while (!command.equalsIgnoreCase("E")) {
 			System.out.print("Command? ");
