@@ -13,16 +13,16 @@ import java.util.NoSuchElementException;
 public class LinkedListWithIterator<T> implements ListWithIteratorInterface<T>{
 
 	private Node <T> firstNode;
+	private Node <T> lastNode;
 	private int numberOfEntries;
 	
 	public LinkedListWithIterator()
 	{
-		initializeDataFields();
-	}
-	private void initializeDataFields() {
 		firstNode = null;
+		lastNode = null;
 		numberOfEntries = 0;
 	}
+
 	@Override
 	public void add(T newEntry) {
 		Node<T> newNode = new Node <T> (newEntry);
@@ -30,9 +30,9 @@ public class LinkedListWithIterator<T> implements ListWithIteratorInterface<T>{
 			firstNode = newNode;
 		else
 		{
-			Node<T> lastNode = getNodeAt (numberOfEntries);
 			lastNode.setNextNode(newNode);
 		}
+		lastNode = newNode;
 		numberOfEntries ++;
 	}
 	
@@ -49,9 +49,10 @@ public class LinkedListWithIterator<T> implements ListWithIteratorInterface<T>{
 		return position;
 	}
 
-	private Node<T> getNodeAt(int numberOfEntries) {
+	private Node<T> getNodeAt(int givenPosition) {
+		assert firstNode != null && 1 <= givenPosition && givenPosition <= numberOfEntries;
 		Node<T> newNode = firstNode;
-		for (int i = 1; i < numberOfEntries; i++)
+		for (int i = 1; i < givenPosition; i++)
 			newNode = newNode.getNextNode();
 		return newNode;
 	}
@@ -106,7 +107,9 @@ public class LinkedListWithIterator<T> implements ListWithIteratorInterface<T>{
 
 	@Override
 	public void clear() {
-		initializeDataFields();
+		firstNode = null;
+		lastNode = null;
+		numberOfEntries = 0;
 	}
 
 	@Override

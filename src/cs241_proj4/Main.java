@@ -26,11 +26,10 @@ public class Main {
 		Scanner city = new Scanner(new File("city.dat"));
 		Scanner road = new Scanner(new File("road.dat"));
 		LinkedListWithIterator<CityNode> cities = new LinkedListWithIterator<CityNode>();
-		CityNode newCity = new CityNode();
 		
 		while (city.hasNext())
 		{
-			dg.addVertex(read(city, newCity, cities));
+			dg.addVertex(read(city, cities));
 		}
 		
 		while (road.hasNext())
@@ -44,20 +43,20 @@ public class Main {
 		
 		int begin, end;
 		// Checks if command is not E to exit
-		while (!command.equalsIgnoreCase("E")) {
+		while (!command.equals("E")) {
 			System.out.print("Command? ");
-			command = scan.nextLine();
+			command = scan.nextLine().toUpperCase();
 
-			switch (command.toUpperCase()) {
+			switch (command) {
 			case "Q":
 				System.out.println("City Code: ");
-				String abbrev = scan.nextLine();
+				String abbrev = scan.nextLine().toUpperCase();
 				Iterator <CityNode> cityIT = cities.getIterator();
 				boolean found = false;
 				while (cityIT.hasNext() && found != true)
 				{
 					CityNode nextCity = cityIT.next();
-					if (nextCity.abbrev == abbrev)
+					if (nextCity.getAbbrev().equalsIgnoreCase(abbrev))
 					{
 						System.out.println(nextCity.num + "\t" + nextCity.abbrev + "\t" + nextCity.name + "\t" + nextCity.pop + "\t" + nextCity.elev);
 						found = true;
@@ -66,24 +65,26 @@ public class Main {
 				break;
 			case "D":
 				System.out.println("City codes: ");
-				begin = getNum(cities, scan.next());
-				end = getNum(cities, scan.next());
+				begin = getNum(cities, scan.next().toUpperCase());
+				end = getNum(cities, scan.next().toUpperCase());
 				StackInterface<Integer> path = null;
 				int length = dg.getShortestPath(begin, end, path);
 				System.out.println("The minimum distance between " + getName(cities, begin) + " and " + getName(cities, end) + " is " + length + "through route: " + path.toString());
 				break;
 			case "I":
 				System.out.print("City codes and distance: ");
-				begin = getNum(cities, scan.next());
-				end = getNum(cities, scan.next());
+				begin = getNum(cities, scan.next().toUpperCase());
+				end = getNum(cities, scan.next().toUpperCase());
 				int dist = scan.nextInt();
-				dg.addEdge(begin, end, dist);
-				System.out.println("You have inserted a road from " + getName(cities, begin) + " to " + getName(cities, end) + " with a distance of " + dist + ".");
+				if (dg.addEdge(begin, end, dist) == true)
+					System.out.println("You have inserted a road from " + getName(cities, begin) + " to " + getName(cities, end) + " with a distance of " + dist + ".");
+				else
+					System.out.println("Path not added. Path already Exists!");
 				break;
 			case "R":
 				System.out.print("City codes: ");
-				begin = getNum(cities, scan.next());
-				end = getNum(cities, scan.next());
+				begin = getNum(cities, scan.next().toUpperCase());
+				end = getNum(cities, scan.next().toUpperCase());
 				dg.removeEdge(begin, end);
 				break;
 			// Runs H command, which displays all the command to choose from
@@ -125,15 +126,16 @@ public class Main {
 		while (cityIT.hasNext())
 		{
 			CityNode nextCity = cityIT.next();
-			if (nextCity.abbrev == abbrev)
+			if (nextCity.abbrev.compareToIgnoreCase(abbrev) == 0)
 			{
 				return nextCity.num;
 			}
 		}
 		return 0;
 	}
-	protected static int read(Scanner city, CityNode newCity, LinkedListWithIterator<CityNode> cities)
+	protected static int read(Scanner city, LinkedListWithIterator<CityNode> cities)
 	{
+		CityNode newCity = new CityNode();
 		int num = city.nextInt();
 		newCity.setNum(num);
 		newCity.setAbbrev(city.next());
